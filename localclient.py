@@ -41,14 +41,19 @@ class LocalClient:
             dictState = self.getDictionaryGameState()
             if dictState == None:
                 self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if self.verbose: print("Game state blank")
                 return
             stateIntStr = str(dictState)
             state = [int(stateIntStr[i: i + 2]) for i in range(0, len(stateIntStr), 2)]
             self.gameState = state
+            if self.verbose: print("Game state set")
         except pycspr.api.connection.NodeAPIError as error:
             if "-32003" in str(error):
                 self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if self.verbose: print("API Error game state blank")
             else:
+                self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                if self.verbose: print("Unknown API Error")
                 return None
 
     def reset(self):
