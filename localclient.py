@@ -18,7 +18,7 @@ class LocalClient:
     def __init__(self, isHost, opponentPublicKeyHex):
         self.isHost = isHost
         self.opponentPublicKeyHex = opponentPublicKeyHex
-        self.client = NodeClient(NodeConnection(host = "3.208.91.63", port_rpc = 7777))
+        self.client = NodeClient(NodeConnection(host = "95.216.67.162", port_rpc = 7777))
         self.privateKey, self.publicKey = self.getKeys() if isHost else self.getGuestKeys()
         self.contractHash = self.getContractHash("tictactoe_contract")
         self.deployFailed = None
@@ -39,6 +39,7 @@ class LocalClient:
     def setGameState(self):
         try:
             dictState = self.getDictionaryGameState()
+            if self.verbose: print("dictState" + dictState)
             if dictState == None:
                 self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 if self.verbose: print("Game state blank")
@@ -52,8 +53,8 @@ class LocalClient:
                 self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 if self.verbose: print("API Error game state blank")
             else:
-                self.gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 if self.verbose: print("Unknown API Error")
+                exit(1)
                 return None
 
     def reset(self):
@@ -173,7 +174,7 @@ class LocalClient:
         transforms = [kt["transform"] for kt in event.payload["DeployProcessed"]["execution_result"]["Success"]["effect"]["transforms"] if kt["key"][:4] == "uref"]
 
         for transform in transforms:
-            if "WriteCLValue" in transform and "parsed" in transform["WriteCLValue"]: #Check so we don't throw an error
+            if "WriteCLValue" in transform and "parsed" in transform["WriteCLValue"] and not transform["WriteCLValue"]["parsed"] == None: #Check so we don't throw an error
                 if self.verbose: print(transform)
                 hostScore = "0"
                 guestScore = "0"
